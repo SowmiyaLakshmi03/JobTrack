@@ -1,0 +1,706 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Follow-ups | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Follow-ups
+{% endblock %}
+
+{% block content %}
+
+<div class="followups-page-header">
+
+    <div>
+
+        <span class="eyebrow-label">
+            FOLLOW-UP COMMAND CENTER
+        </span>
+
+        <h1>
+            Follow-ups
+        </h1>
+
+        <p>
+            Stay on top of recruiter messages, applications
+            and important next actions.
+        </p>
+
+    </div>
+
+    <a
+        href="{% url 'applications:list' %}"
+        class="btn btn-secondary"
+    >
+        ← Applications
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     OVERVIEW
+     ===================================================== -->
+
+<div class="followups-overview-grid">
+
+    <div class="card followup-overview-card">
+
+        <div class="followup-overview-top">
+
+            <span>
+                TOTAL
+            </span>
+
+            <div class="followup-overview-icon total">
+                ✓
+            </div>
+
+        </div>
+
+        <strong>
+            {{ total_follow_ups }}
+        </strong>
+
+        <small>
+            Follow-ups tracked
+        </small>
+
+    </div>
+
+
+    <div class="card followup-overview-card">
+
+        <div class="followup-overview-top">
+
+            <span>
+                OVERDUE
+            </span>
+
+            <div class="followup-overview-icon overdue">
+                !
+            </div>
+
+        </div>
+
+        <strong>
+            {{ overdue_count }}
+        </strong>
+
+        <small>
+            Need your attention
+        </small>
+
+    </div>
+
+
+    <div class="card followup-overview-card">
+
+        <div class="followup-overview-top">
+
+            <span>
+                TODAY
+            </span>
+
+            <div class="followup-overview-icon today">
+                ●
+            </div>
+
+        </div>
+
+        <strong>
+            {{ today_count }}
+        </strong>
+
+        <small>
+            Due today
+        </small>
+
+    </div>
+
+
+    <div class="card followup-overview-card">
+
+        <div class="followup-overview-top">
+
+            <span>
+                UPCOMING
+            </span>
+
+            <div class="followup-overview-icon upcoming">
+                →
+            </div>
+
+        </div>
+
+        <strong>
+            {{ upcoming_count }}
+        </strong>
+
+        <small>
+            Future follow-ups
+        </small>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     OVERDUE
+     ===================================================== -->
+
+<section class="card followups-workspace-card">
+
+    <div class="followups-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                NEEDS ATTENTION
+            </span>
+
+            <h2>
+                Overdue Follow-ups
+            </h2>
+
+            <p>
+                Follow-ups that are past their scheduled date.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if overdue_follow_ups %}
+
+        <div class="followup-list">
+
+            {% for follow_up in overdue_follow_ups %}
+
+                <div class="followup-item overdue-item">
+
+                    <div class="followup-date-box overdue-date">
+
+                        <span>
+                            {{ follow_up.follow_up_date|date:"M" }}
+                        </span>
+
+                        <strong>
+                            {{ follow_up.follow_up_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="followup-main">
+
+                        <div class="followup-title-row">
+
+                            <h3>
+                                {{ follow_up.title }}
+                            </h3>
+
+                            <span class="followup-status overdue-status">
+                                Overdue
+                            </span>
+
+                        </div>
+
+                        <p>
+
+                            <strong>
+                                {{ follow_up.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ follow_up.application.company.name }}
+
+                        </p>
+
+
+                        {% if follow_up.notes %}
+
+                            <div class="followup-notes-preview">
+
+                                {{ follow_up.notes|truncatechars:100 }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="followup-actions">
+
+                        <form
+                            method="post"
+                            action="{% url 'applications:follow_up_complete' follow_up.pk %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="followup-complete-button"
+                            >
+                                ✓ Complete
+                            </button>
+
+                        </form>
+
+                        <a
+                            href="{% url 'applications:detail' follow_up.application_id %}"
+                            class="followup-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="followups-empty-state">
+
+            <div class="followups-empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                Nothing overdue
+            </h3>
+
+            <p>
+                You're all caught up. No follow-ups are past due.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =====================================================
+     TODAY
+     ===================================================== -->
+
+<section class="card followups-workspace-card">
+
+    <div class="followups-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                TODAY
+            </span>
+
+            <h2>
+                Today's Follow-ups
+            </h2>
+
+            <p>
+                Actions scheduled for today.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if todays_follow_ups %}
+
+        <div class="followup-list">
+
+            {% for follow_up in todays_follow_ups %}
+
+                <div class="followup-item today-followup-item">
+
+                    <div class="followup-date-box today-followup-date">
+
+                        <span>
+                            TODAY
+                        </span>
+
+                        <strong>
+                            {{ follow_up.follow_up_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="followup-main">
+
+                        <div class="followup-title-row">
+
+                            <h3>
+                                {{ follow_up.title }}
+                            </h3>
+
+                            <span class="followup-status today-status">
+                                Due Today
+                            </span>
+
+                        </div>
+
+                        <p>
+
+                            <strong>
+                                {{ follow_up.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ follow_up.application.company.name }}
+
+                        </p>
+
+
+                        {% if follow_up.notes %}
+
+                            <div class="followup-notes-preview">
+
+                                {{ follow_up.notes|truncatechars:100 }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="followup-actions">
+
+                        <form
+                            method="post"
+                            action="{% url 'applications:follow_up_complete' follow_up.pk %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="followup-complete-button"
+                            >
+                                ✓ Complete
+                            </button>
+
+                        </form>
+
+                        <a
+                            href="{% url 'applications:detail' follow_up.application_id %}"
+                            class="followup-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="followups-empty-state">
+
+            <div class="followups-empty-icon">
+                ●
+            </div>
+
+            <h3>
+                No follow-ups today
+            </h3>
+
+            <p>
+                Follow-ups scheduled for today will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =====================================================
+     UPCOMING
+     ===================================================== -->
+
+<section class="card followups-workspace-card">
+
+    <div class="followups-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                NEXT UP
+            </span>
+
+            <h2>
+                Upcoming Follow-ups
+            </h2>
+
+            <p>
+                Future actions you have planned.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if upcoming_follow_ups %}
+
+        <div class="followup-list">
+
+            {% for follow_up in upcoming_follow_ups %}
+
+                <div class="followup-item">
+
+                    <div class="followup-date-box">
+
+                        <span>
+                            {{ follow_up.follow_up_date|date:"M" }}
+                        </span>
+
+                        <strong>
+                            {{ follow_up.follow_up_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="followup-main">
+
+                        <div class="followup-title-row">
+
+                            <h3>
+                                {{ follow_up.title }}
+                            </h3>
+
+                            <span class="followup-status upcoming-status">
+                                Upcoming
+                            </span>
+
+                        </div>
+
+                        <p>
+
+                            <strong>
+                                {{ follow_up.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ follow_up.application.company.name }}
+
+                        </p>
+
+
+                        {% if follow_up.notes %}
+
+                            <div class="followup-notes-preview">
+
+                                {{ follow_up.notes|truncatechars:100 }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="followup-actions">
+
+                        <form
+                            method="post"
+                            action="{% url 'applications:follow_up_complete' follow_up.pk %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="followup-complete-button"
+                            >
+                                ✓ Complete
+                            </button>
+
+                        </form>
+
+                        <a
+                            href="{% url 'applications:detail' follow_up.application_id %}"
+                            class="followup-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="followups-empty-state">
+
+            <div class="followups-empty-icon">
+                →
+            </div>
+
+            <h3>
+                No upcoming follow-ups
+            </h3>
+
+            <p>
+                Future follow-ups will appear here automatically.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =====================================================
+     COMPLETED
+     ===================================================== -->
+
+<section class="card followups-workspace-card">
+
+    <div class="followups-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                HISTORY
+            </span>
+
+            <h2>
+                Completed Follow-ups
+            </h2>
+
+            <p>
+                Follow-ups you have already completed.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if completed_follow_ups %}
+
+        <div class="followup-list">
+
+            {% for follow_up in completed_follow_ups %}
+
+                <div class="followup-item completed-followup-item">
+
+                    <div class="followup-date-box completed-followup-date">
+
+                        <span>
+                            {{ follow_up.follow_up_date|date:"M" }}
+                        </span>
+
+                        <strong>
+                            {{ follow_up.follow_up_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="followup-main">
+
+                        <div class="followup-title-row">
+
+                            <h3>
+                                {{ follow_up.title }}
+                            </h3>
+
+                            <span class="followup-status completed-status">
+                                Completed
+                            </span>
+
+                        </div>
+
+                        <p>
+
+                            <strong>
+                                {{ follow_up.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ follow_up.application.company.name }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="followup-actions">
+
+                        <a
+                            href="{% url 'applications:detail' follow_up.application_id %}"
+                            class="followup-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="followups-empty-state">
+
+            <div class="followups-empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                No completed follow-ups
+            </h3>
+
+            <p>
+                Completed follow-ups will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,1257 @@
+{% extends "base.html" %}
+
+{% block title %}Applications | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       APPLICATIONS PAGE
+       Scoped styles - will not affect other pages
+       ========================================================= */
+
+    .applications-page {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .applications-page .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .applications-page .page-header h1 {
+        margin: 0 0 6px;
+    }
+
+    .applications-page .page-subtitle {
+        margin: 0;
+    }
+
+    /* =========================================================
+       PIPELINE
+       ========================================================= */
+
+    .applications-page .pipeline-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+    }
+
+    .applications-page .pipeline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 760px;
+        margin-top: 24px;
+    }
+
+    .applications-page .pipeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 90px;
+        text-align: center;
+    }
+
+    .applications-page .pipeline-number {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eff6ff;
+        border: 2px solid #2563eb;
+        color: #1d4ed8;
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .applications-page .pipeline-step > span {
+        margin-top: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        white-space: nowrap;
+    }
+
+    .applications-page .pipeline-line {
+        height: 2px;
+        flex: 1;
+        min-width: 30px;
+        max-width: 100px;
+        background: #e2e8f0;
+        margin: 0 8px;
+    }
+
+    /* =========================================================
+       SEARCH & FILTER CARD
+       ========================================================= */
+
+    .applications-page .search-card {
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .applications-page .search-card .section-heading {
+        margin-bottom: 20px;
+    }
+
+    .applications-page .search-card .section-heading h2 {
+        margin-bottom: 5px;
+    }
+
+    .applications-page .search-card .section-heading p {
+        margin: 0;
+    }
+
+    /* Search field */
+
+    .applications-page .search-field {
+        width: 100%;
+        margin-bottom: 18px;
+    }
+
+    .applications-page .search-field label,
+    .applications-page .filter-grid label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .applications-page .search-input-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .applications-page .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 20px;
+        pointer-events: none;
+    }
+
+    .applications-page .search-input-wrapper input {
+        width: 100%;
+        height: 46px;
+        box-sizing: border-box;
+        padding: 0 14px 0 42px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .applications-page .search-input-wrapper input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    /* Filter grid */
+
+    .applications-page .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        width: 100%;
+    }
+
+    .applications-page .filter-grid .form-group {
+        min-width: 0;
+    }
+
+    .applications-page .filter-grid select {
+        width: 100%;
+        height: 44px;
+        box-sizing: border-box;
+        padding: 0 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .applications-page .filter-grid select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    /* Search buttons */
+
+    .applications-page .search-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .applications-page .search-button {
+        min-width: 110px;
+    }
+
+    /* =========================================================
+       APPLICATION RESULTS
+       ========================================================= */
+
+    .applications-page .applications-card {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .applications-page .applications-heading {
+        padding: 22px 24px;
+        margin: 0;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .applications-page .applications-heading h2 {
+        margin: 0 0 5px;
+    }
+
+    .applications-page .applications-heading p {
+        margin: 0;
+    }
+
+    .applications-page .result-count {
+        flex-shrink: 0;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .applications-page .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .applications-page .application-table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+    }
+
+    .applications-page .application-table th {
+        padding: 13px 18px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .applications-page .application-table td {
+        padding: 17px 18px;
+        border-bottom: 1px solid #eef2f7;
+        vertical-align: middle;
+    }
+
+    .applications-page .application-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .applications-page .application-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    /* Position */
+
+    .applications-page .position-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 220px;
+    }
+
+    .applications-page .company-avatar {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .applications-page .job-title-link {
+        display: block;
+        color: #0f172a;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .applications-page .job-title-link:hover {
+        color: #2563eb;
+    }
+
+    .applications-page .job-type-label {
+        display: block;
+        margin-top: 3px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    /* Company */
+
+    .applications-page .company-cell strong {
+        color: #334155;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    /* Work mode */
+
+    .applications-page .work-mode-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .applications-page .work-mode-cell span {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .applications-page .work-mode-cell small {
+        color: #94a3b8;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    /* Date */
+
+    .applications-page .application-date {
+        color: #475569;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* Age */
+
+    .applications-page .application-age {
+        color: #64748b;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* Status */
+
+    .applications-page .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Keep existing status color classes compatible */
+
+    .applications-page .status-applied {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .applications-page .status-shortlisted {
+        background: #f0fdf4;
+        color: #15803d;
+    }
+
+    .applications-page .status-assessment {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .applications-page .status-interview {
+        background: #f5f3ff;
+        color: #6d28d9;
+    }
+
+    .applications-page .status-offer {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .applications-page .status-rejected {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .applications-page .status-withdrawn {
+        background: #f8fafc;
+        color: #475569;
+    }
+
+    .applications-page .status-accepted {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    /* View */
+
+    .applications-page .view-link {
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .applications-page .view-link:hover {
+        text-decoration: underline;
+    }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .applications-page .empty-state {
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        padding: 40px 24px;
+        text-align: center;
+    }
+
+    .applications-page .empty-state-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: #64748b;
+        font-size: 22px;
+    }
+
+    .applications-page .empty-state h3 {
+        margin: 0;
+        color: #0f172a;
+    }
+
+    .applications-page .empty-state p {
+        margin: 0 0 8px;
+        color: #64748b;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 1000px) {
+
+        .applications-page .filter-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .applications-page .pipeline {
+            justify-content: flex-start;
+        }
+
+        .applications-page .pipeline-line {
+            flex: 0 0 45px;
+        }
+    }
+
+    @media (max-width: 700px) {
+
+        .applications-page .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .applications-page .page-header .btn {
+            width: 100%;
+        }
+
+        .applications-page .pipeline-card,
+        .applications-page .search-card {
+            padding: 18px;
+        }
+
+        .applications-page .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .applications-page .search-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .applications-page .search-actions .btn {
+            width: 100%;
+        }
+
+        .applications-page .applications-heading {
+            padding: 18px;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .applications-page .result-count {
+            align-self: flex-start;
+        }
+    }
+</style>
+
+
+<div class="applications-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <p class="eyebrow">
+                APPLICATIONS
+            </p>
+
+            <h1>
+                Applications
+            </h1>
+
+            <p class="page-subtitle">
+                Track, organize, and manage all your job opportunities in one place.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'applications:create' %}"
+            class="btn btn-primary"
+        >
+            + Add Application
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION PIPELINE
+         ===================================================== -->
+
+    <div class="pipeline-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <p class="eyebrow">
+                    PIPELINE
+                </p>
+
+                <h2>
+                    Your Job Hunt Pipeline
+                </h2>
+
+                <p>
+                    See where your applications currently stand.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="pipeline">
+
+
+            <!-- APPLIED -->
+
+            <div class="pipeline-step">
+
+                <div class="pipeline-number">
+                    {{ pipeline_counts.applied }}
+                </div>
+
+                <span>
+                    Applied
+                </span>
+
+            </div>
+
+
+            <div class="pipeline-line"></div>
+
+
+            <!-- SHORTLISTED -->
+
+            <div class="pipeline-step">
+
+                <div class="pipeline-number">
+                    {{ pipeline_counts.shortlisted }}
+                </div>
+
+                <span>
+                    Shortlisted
+                </span>
+
+            </div>
+
+
+            <div class="pipeline-line"></div>
+
+
+            <!-- ASSESSMENT -->
+
+            <div class="pipeline-step">
+
+                <div class="pipeline-number">
+                    {{ pipeline_counts.assessment }}
+                </div>
+
+                <span>
+                    Assessment
+                </span>
+
+            </div>
+
+
+            <div class="pipeline-line"></div>
+
+
+            <!-- INTERVIEW -->
+
+            <div class="pipeline-step">
+
+                <div class="pipeline-number">
+                    {{ pipeline_counts.interview }}
+                </div>
+
+                <span>
+                    Interview
+                </span>
+
+            </div>
+
+
+            <div class="pipeline-line"></div>
+
+
+            <!-- OFFER -->
+
+            <div class="pipeline-step">
+
+                <div class="pipeline-number">
+                    {{ pipeline_counts.offer }}
+                </div>
+
+                <span>
+                    Offer
+                </span>
+
+            </div>
+
+
+            <div class="pipeline-line"></div>
+
+
+            <!-- ACCEPTED -->
+
+            <div class="pipeline-step">
+
+                <div class="pipeline-number">
+                    {{ pipeline_counts.accepted|default:"0" }}
+                </div>
+
+                <span>
+                    Accepted
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH & FILTERS
+         ===================================================== -->
+
+    <div class="card search-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <p class="eyebrow">
+                    SEARCH & FILTER
+                </p>
+
+                <h2>
+                    Find an Application
+                </h2>
+
+                <p>
+                    Search by job title, company, or location and narrow results using filters.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="get"
+            action="{% url 'applications:list' %}"
+        >
+
+
+            <!-- SEARCH -->
+
+            <div class="form-group search-field">
+
+                <label for="search">
+                    Search
+                </label>
+
+                <div class="search-input-wrapper">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="search"
+                        name="search"
+                        value="{{ search_query }}"
+                        placeholder="Search job title, company, or location..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="filter-grid">
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select
+                        id="status"
+                        name="status"
+                    >
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        {% for value, label in status_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_status == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- JOB TYPE -->
+
+                <div class="form-group">
+
+                    <label for="job_type">
+                        Job Type
+                    </label>
+
+                    <select
+                        id="job_type"
+                        name="job_type"
+                    >
+
+                        <option value="">
+                            All job types
+                        </option>
+
+                        {% for value, label in job_type_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_job_type == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- WORK MODE -->
+
+                <div class="form-group">
+
+                    <label for="work_mode">
+                        Work Mode
+                    </label>
+
+                    <select
+                        id="work_mode"
+                        name="work_mode"
+                    >
+
+                        <option value="">
+                            All work modes
+                        </option>
+
+                        {% for value, label in work_mode_choices %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if selected_work_mode == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- SORT -->
+
+                <div class="form-group">
+
+                    <label for="sort">
+                        Sort By
+                    </label>
+
+                    <select
+                        id="sort"
+                        name="sort"
+                    >
+
+                        <option
+                            value="newest"
+                            {% if selected_sort == "newest" %}
+                                selected
+                            {% endif %}
+                        >
+                            Newest first
+                        </option>
+
+                        <option
+                            value="oldest"
+                            {% if selected_sort == "oldest" %}
+                                selected
+                            {% endif %}
+                        >
+                            Oldest first
+                        </option>
+
+                        <option
+                            value="title_az"
+                            {% if selected_sort == "title_az" %}
+                                selected
+                            {% endif %}
+                        >
+                            Job title A–Z
+                        </option>
+
+                        <option
+                            value="title_za"
+                            {% if selected_sort == "title_za" %}
+                                selected
+                            {% endif %}
+                        >
+                            Job title Z–A
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="search-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary search-button"
+                >
+                    Search
+                </button>
+
+
+                {% if search_query or selected_status or selected_job_type or selected_work_mode or selected_sort != "newest" %}
+
+                    <a
+                        href="{% url 'applications:list' %}"
+                        class="btn btn-secondary"
+                    >
+                        Clear Filters
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION RESULTS
+         ===================================================== -->
+
+    <div class="card applications-card">
+
+
+        <div class="section-heading applications-heading">
+
+            <div>
+
+                <p class="eyebrow">
+                    APPLICATIONS
+                </p>
+
+                <h2>
+                    Your Opportunities
+                </h2>
+
+
+                {% if search_query or selected_status or selected_job_type or selected_work_mode %}
+
+                    <p>
+                        Filtered results
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        All your tracked opportunities
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="result-count">
+
+                {{ applications|length }}
+                result{% if applications|length != 1 %}s{% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% if applications %}
+
+
+            <div class="table-wrapper">
+
+                <table class="application-table">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                POSITION
+                            </th>
+
+                            <th>
+                                COMPANY
+                            </th>
+
+                            <th>
+                                WORK MODE
+                            </th>
+
+                            <th>
+                                APPLIED
+                            </th>
+
+                            <th>
+                                AGE
+                            </th>
+
+                            <th>
+                                STATUS
+                            </th>
+
+                            <th>
+                                VIEW
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for application in applications %}
+
+
+                            <tr>
+
+
+                                <!-- POSITION -->
+
+                                <td>
+
+                                    <div class="position-cell">
+
+                                        <div class="company-avatar">
+                                            {{ application.company.name|first|upper }}
+                                        </div>
+
+
+                                        <div>
+
+                                            <a
+                                                href="{% url 'applications:detail' application.pk %}"
+                                                class="job-title-link"
+                                            >
+                                                {{ application.job_title }}
+                                            </a>
+
+
+                                            <span class="job-type-label">
+                                                {{ application.get_job_type_display }}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- COMPANY -->
+
+                                <td>
+
+                                    <div class="company-cell">
+
+                                        <strong>
+                                            {{ application.company.name }}
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- WORK MODE -->
+
+                                <td>
+
+                                    <div class="work-mode-cell">
+
+                                        <span>
+                                            {{ application.get_work_mode_display }}
+                                        </span>
+
+
+                                        {% if application.location %}
+
+                                            <small>
+                                                {{ application.location }}
+                                            </small>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- APPLICATION DATE -->
+
+                                <td>
+
+                                    <span class="application-date">
+                                        {{ application.application_date|date:"d M Y" }}
+                                    </span>
+
+                                </td>
+
+
+                                <!-- AGE -->
+
+                                <td>
+
+                                    <span class="application-age">
+
+                                        {{ application.created_at|timesince }} ago
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span class="status-badge status-{{ application.status|lower }}">
+
+                                        {{ application.get_status_display }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- VIEW -->
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'applications:detail' application.pk %}"
+                                        class="view-link"
+                                    >
+                                        View →
+                                    </a>
+
+                                </td>
+
+
+                            </tr>
+
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- NO RESULTS -->
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    ⌕
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        No matching applications
+                    </h3>
+
+                    <p>
+                        No applications match your current search or filters.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="{% url 'applications:list' %}"
+                    class="btn btn-secondary"
+                >
+                    Clear Filters
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+{% endblock %}

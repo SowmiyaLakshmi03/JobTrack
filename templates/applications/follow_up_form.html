@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Add Follow-up | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Add Follow-up
+{% endblock %}
+
+{% block content %}
+
+<div class="followup-form-page-header">
+
+    <div>
+
+        <span class="eyebrow-label">
+            FOLLOW-UP MANAGEMENT
+        </span>
+
+        <h1>
+            Schedule Follow-up
+        </h1>
+
+        <p>
+            Create a reminder for
+            <strong>{{ application.job_title }}</strong>
+            at
+            <strong>{{ application.company.name }}</strong>.
+        </p>
+
+    </div>
+
+    <a
+        href="{% url 'applications:detail' application.pk %}"
+        class="btn btn-secondary"
+    >
+        ← Back to Application
+    </a>
+
+</div>
+
+
+<div class="followup-form-layout">
+
+    <section class="card followup-form-card">
+
+        <div class="followup-form-card-header">
+
+            <div>
+
+                <span class="form-section-number">
+                    01
+                </span>
+
+                <div>
+
+                    <h2>
+                        Follow-up Details
+                    </h2>
+
+                    <p>
+                        Decide what you need to follow up on
+                        and when it should happen.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            class="followup-form"
+        >
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-errors">
+
+                    {% for error in form.non_field_errors %}
+
+                        <p>
+                            {{ error }}
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="followup-form-section">
+
+                <div class="followup-form-section-heading">
+
+                    <h3>
+                        Schedule
+                    </h3>
+
+                    <p>
+                        Choose when you want to take action.
+                    </p>
+
+                </div>
+
+
+                <div class="followup-form-grid">
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="{{ form.follow_up_date.id_for_label }}"
+                        >
+                            Follow-up Date
+                        </label>
+
+                        {{ form.follow_up_date }}
+
+                        <span class="form-help-text">
+                            Use today's date for an immediate follow-up.
+                        </span>
+
+                        {% if form.follow_up_date.errors %}
+
+                            <div class="field-error">
+                                {{ form.follow_up_date.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="{{ form.title.id_for_label }}"
+                        >
+                            Follow-up Title
+                        </label>
+
+                        {{ form.title }}
+
+                        <span class="form-help-text">
+                            Example: Follow up with recruiter.
+                        </span>
+
+                        {% if form.title.errors %}
+
+                            <div class="field-error">
+                                {{ form.title.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="followup-form-section">
+
+                <div class="followup-form-section-heading">
+
+                    <h3>
+                        Follow-up Notes
+                    </h3>
+
+                    <p>
+                        Add useful details about what you need to do.
+                    </p>
+
+                </div>
+
+
+                <div class="form-group followup-form-full">
+
+                    <label
+                        for="{{ form.notes.id_for_label }}"
+                    >
+                        Notes
+                    </label>
+
+                    {{ form.notes }}
+
+                    <span class="form-help-text">
+                        Add recruiter details, questions,
+                        messages to send, or anything you want
+                        to remember.
+                    </span>
+
+                    {% if form.notes.errors %}
+
+                        <div class="field-error">
+                            {{ form.notes.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="followup-form-actions">
+
+                <a
+                    href="{% url 'applications:detail' application.pk %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Follow-up
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <aside class="card followup-application-summary">
+
+        <span class="eyebrow-label">
+            APPLICATION
+        </span>
+
+        <h2>
+            {{ application.job_title }}
+        </h2>
+
+
+        <div class="followup-summary-company">
+
+            <div class="followup-summary-avatar">
+
+                {{ application.company.name|first|upper }}
+
+            </div>
+
+            <div>
+
+                <strong>
+                    {{ application.company.name }}
+                </strong>
+
+                {% if application.location %}
+
+                    <span>
+                        {{ application.location }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="followup-summary-divider">
+        </div>
+
+
+        <div class="followup-summary-row">
+
+            <span>
+                Application Status
+            </span>
+
+            <strong>
+                {{ application.get_status_display }}
+            </strong>
+
+        </div>
+
+
+        <div class="followup-summary-row">
+
+            <span>
+                Applied On
+            </span>
+
+            <strong>
+                {{ application.application_date|date:"d M Y" }}
+            </strong>
+
+        </div>
+
+
+        <div class="followup-summary-divider">
+        </div>
+
+
+        <div class="followup-summary-tip">
+
+            <strong>
+                Follow-up tip
+            </strong>
+
+            <p>
+                A clear follow-up reminder helps you keep
+                applications moving without relying on memory.
+            </p>
+
+        </div>
+
+    </aside>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,803 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Schedule Interview | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Add Interview
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   INTERVIEW FORM PAGE
+   ========================================================= */
+
+.interview-form-page {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.interview-form-header {
+    margin-bottom: 28px;
+}
+
+.interview-form-eyebrow {
+    margin: 0 0 8px;
+
+    color: #2563eb;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.interview-form-header h1 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+.interview-form-subtitle {
+    margin: 10px 0 0;
+
+    color: #64748b;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.interview-form-subtitle strong {
+    color: #1e293b;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.interview-back-button {
+    display: inline-flex;
+    align-items: center;
+
+    margin-top: 18px;
+    padding: 9px 14px;
+
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.interview-back-button:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.interview-form-card {
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   FORM SECTION
+   ========================================================= */
+
+.interview-form-section {
+    padding: 28px 30px;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.interview-form-section:last-of-type {
+    border-bottom: none;
+}
+
+.interview-section-number {
+    color: #2563eb;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+}
+
+.interview-form-section h2 {
+    margin: 5px 0 5px;
+
+    color: #0f172a;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.interview-form-section-description {
+    margin: 0 0 24px;
+
+    color: #64748b;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.interview-form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+.interview-form-field.full-width {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+.interview-form-field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.interview-form-field label .required {
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.interview-form-field input,
+.interview-form-field select,
+.interview-form-field textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #0f172a;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.interview-form-field input,
+.interview-form-field select {
+    height: 46px;
+
+    padding: 0 13px;
+}
+
+.interview-form-field textarea {
+    min-height: 120px;
+
+    padding: 12px 13px;
+
+    resize: vertical;
+}
+
+.interview-form-field input:focus,
+.interview-form-field select:focus,
+.interview-form-field textarea:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.interview-form-field input::placeholder,
+.interview-form-field textarea::placeholder {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   HELP TEXT
+   ========================================================= */
+
+.interview-field-help {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ERRORS
+   ========================================================= */
+
+.interview-form-errors {
+    margin-bottom: 22px;
+    padding: 14px 16px;
+
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    font-size: 13px;
+}
+
+.interview-field-error {
+    margin-top: 6px;
+
+    color: #dc2626;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.interview-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    padding: 22px 30px;
+
+    background: #f8fafc;
+
+    border-top: 1px solid #eef2f7;
+}
+
+.interview-cancel-button,
+.interview-save-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.interview-cancel-button {
+    border: 1px solid #cbd5e1;
+
+    background: #ffffff;
+
+    color: #334155;
+}
+
+.interview-cancel-button:hover {
+    background: #f8fafc;
+}
+
+.interview-save-button {
+    border: 1px solid #2563eb;
+
+    background: #2563eb;
+
+    color: #ffffff;
+}
+
+.interview-save-button:hover {
+    background: #1d4ed8;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .interview-form-page {
+        max-width: 100%;
+    }
+
+    .interview-form-header h1 {
+        font-size: 27px;
+    }
+
+    .interview-form-section {
+        padding: 22px 18px;
+    }
+
+    .interview-form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+    .interview-form-field.full-width {
+        grid-column: auto;
+    }
+
+    .interview-form-actions {
+        padding: 18px;
+
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .interview-cancel-button,
+    .interview-save-button {
+        width: 100%;
+    }
+}
+
+</style>
+
+
+<div class="interview-form-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="interview-form-header">
+
+        <p class="interview-form-eyebrow">
+            INTERVIEW MANAGEMENT
+        </p>
+
+        <h1>
+            Schedule Interview
+        </h1>
+
+        <p class="interview-form-subtitle">
+            Add the interview details for
+            <strong>
+                {{ application.job_title }}
+            </strong>
+            at
+            <strong>
+                {{ application.company.name }}
+            </strong>.
+        </p>
+
+        <a
+            href="{% url 'applications:detail' application.pk %}"
+            class="interview-back-button"
+        >
+            ← Back to Application
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM
+         ===================================================== -->
+
+    <form
+        method="post"
+        class="interview-form-card"
+        novalidate
+    >
+
+        {% csrf_token %}
+
+
+        <!-- =================================================
+             FORM ERRORS
+             ================================================= -->
+
+        {% if form.non_field_errors %}
+
+            <div class="interview-form-errors">
+
+                {% for error in form.non_field_errors %}
+
+                    <div>
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             SECTION 01 — SCHEDULE
+             ================================================= -->
+
+        <section class="interview-form-section">
+
+            <span class="interview-section-number">
+                01
+            </span>
+
+            <h2>
+                Interview Details
+            </h2>
+
+            <p class="interview-form-section-description">
+                Schedule and organize the interview.
+            </p>
+
+
+            <div class="interview-form-grid">
+
+
+                <!-- Interview Round -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.round_name.id_for_label }}">
+                        Interview Round
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.round_name }}
+
+                    {% if form.round_name.errors %}
+
+                        {% for error in form.round_name.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Interview Type -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.interview_type.id_for_label }}">
+                        Interview Type
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.interview_type }}
+
+                    {% if form.interview_type.errors %}
+
+                        {% for error in form.interview_type.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Interview Date -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.interview_date.id_for_label }}">
+                        Interview Date
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.interview_date }}
+
+                    {% if form.interview_date.errors %}
+
+                        {% for error in form.interview_date.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Interview Time -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.interview_time.id_for_label }}">
+                        Interview Time
+                    </label>
+
+                    {{ form.interview_time }}
+
+                    <span class="interview-field-help">
+                        Leave blank if the time has not been confirmed.
+                    </span>
+
+                    {% if form.interview_time.errors %}
+
+                        {% for error in form.interview_time.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECTION 02 — MEETING INFORMATION
+             ================================================= -->
+
+        <section class="interview-form-section">
+
+            <span class="interview-section-number">
+                02
+            </span>
+
+            <h2>
+                Meeting Information
+            </h2>
+
+            <p class="interview-form-section-description">
+                Add the meeting link and interviewer details.
+            </p>
+
+
+            <div class="interview-form-grid">
+
+
+                <!-- Meeting Link -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.meeting_link.id_for_label }}">
+                        Meeting Link
+                    </label>
+
+                    {{ form.meeting_link }}
+
+                    <span class="interview-field-help">
+                        Example: Google Meet, Zoom or Microsoft Teams link.
+                    </span>
+
+                    {% if form.meeting_link.errors %}
+
+                        {% for error in form.meeting_link.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Interviewer -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.interviewer.id_for_label }}">
+                        Interviewer
+                    </label>
+
+                    {{ form.interviewer }}
+
+                    {% if form.interviewer.errors %}
+
+                        {% for error in form.interviewer.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECTION 03 — RESULT & NOTES
+             ================================================= -->
+
+        <section class="interview-form-section">
+
+            <span class="interview-section-number">
+                03
+            </span>
+
+            <h2>
+                Result & Notes
+            </h2>
+
+            <p class="interview-form-section-description">
+                Record the current interview status and useful notes.
+            </p>
+
+
+            <div class="interview-form-grid">
+
+
+                <!-- Result -->
+
+                <div class="interview-form-field">
+
+                    <label for="{{ form.result.id_for_label }}">
+                        Result
+                    </label>
+
+                    {{ form.result }}
+
+                    {% if form.result.errors %}
+
+                        {% for error in form.result.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Notes -->
+
+                <div class="interview-form-field full-width">
+
+                    <label for="{{ form.notes.id_for_label }}">
+                        Interview Notes
+                    </label>
+
+                    {{ form.notes }}
+
+                    <span class="interview-field-help">
+                        Add preparation notes, questions, feedback or anything useful.
+                    </span>
+
+                    {% if form.notes.errors %}
+
+                        {% for error in form.notes.errors %}
+
+                            <div class="interview-field-error">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ACTIONS
+             ================================================= -->
+
+        <div class="interview-form-actions">
+
+            <a
+                href="{% url 'applications:detail' application.pk %}"
+                class="interview-cancel-button"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="interview-save-button"
+            >
+                Save Interview
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

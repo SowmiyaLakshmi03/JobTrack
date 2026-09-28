@@ -1,0 +1,839 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dashboard | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Dashboard
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     DASHBOARD HEADER
+     ========================================================= -->
+
+<div class="dashboard-page-header">
+
+    <div>
+
+        <span class="eyebrow-label">
+            JOB HUNT COMMAND CENTER
+        </span>
+
+        <h1>
+            Good to see you, {{ user.username }} 👋
+        </h1>
+
+        <p>
+            Track applications, interviews and follow-ups
+            in one organized workspace.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'applications:create' %}"
+        class="btn btn-primary"
+    >
+        + Add Application
+    </a>
+
+</div>
+
+
+<!-- =========================================================
+     TODAY'S INTERVIEW ALERT
+     ========================================================= -->
+
+{% if todays_interviews %}
+
+    <section class="today-interview-alert">
+
+        <div class="today-interview-alert-icon">
+            ◷
+        </div>
+
+
+        <div class="today-interview-alert-content">
+
+            <span class="today-interview-label">
+                INTERVIEW TODAY
+            </span>
+
+
+            {% for interview in todays_interviews %}
+
+                <div class="today-interview-item">
+
+                    <div>
+
+                        <h2>
+                            {{ interview.application.job_title }}
+                        </h2>
+
+                        <p>
+
+                            {{ interview.application.company.name }}
+
+                            {% if interview.interview_time %}
+
+                                <span>
+                                    •
+                                </span>
+
+                                Today at
+                                {{ interview.interview_time|time:"g:i A" }}
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    {% if interview.meeting_link %}
+
+                        <a
+                            href="{{ interview.meeting_link }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="today-interview-join"
+                        >
+                            Join Meeting ↗
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+{% endif %}
+
+
+<!-- =========================================================
+     OVERVIEW STATS
+     ========================================================= -->
+
+<div class="dashboard-stats-grid">
+
+
+    <!-- APPLICATIONS -->
+
+    <div class="card dashboard-stat-card">
+
+        <div class="dashboard-stat-top">
+
+            <span class="dashboard-stat-label">
+                APPLICATIONS
+            </span>
+
+            <span class="dashboard-stat-icon applications">
+                ▣
+            </span>
+
+        </div>
+
+        <strong class="dashboard-stat-value">
+            {{ total_applications }}
+        </strong>
+
+        <span class="dashboard-stat-description">
+            Total applications tracked
+        </span>
+
+    </div>
+
+
+    <!-- INTERVIEWS -->
+
+    <div class="card dashboard-stat-card">
+
+        <div class="dashboard-stat-top">
+
+            <span class="dashboard-stat-label">
+                INTERVIEWS
+            </span>
+
+            <span class="dashboard-stat-icon interviews">
+                ◷
+            </span>
+
+        </div>
+
+        <strong class="dashboard-stat-value">
+            {{ interview_count }}
+        </strong>
+
+        <span class="dashboard-stat-description">
+            Interviews scheduled
+        </span>
+
+    </div>
+
+
+    <!-- FOLLOW UPS -->
+
+    <div class="card dashboard-stat-card">
+
+        <div class="dashboard-stat-top">
+
+            <span class="dashboard-stat-label">
+                FOLLOW-UPS
+            </span>
+
+            <span class="dashboard-stat-icon followups">
+                ✓
+            </span>
+
+        </div>
+
+        <strong class="dashboard-stat-value">
+            {{ follow_up_count }}
+        </strong>
+
+        <span class="dashboard-stat-description">
+            Pending follow-ups
+        </span>
+
+    </div>
+
+
+    <!-- OFFERS -->
+
+    <div class="card dashboard-stat-card">
+
+        <div class="dashboard-stat-top">
+
+            <span class="dashboard-stat-label">
+                OFFERS
+            </span>
+
+            <span class="dashboard-stat-icon offers">
+                ★
+            </span>
+
+        </div>
+
+        <strong class="dashboard-stat-value">
+            {{ offer_count }}
+        </strong>
+
+        <span class="dashboard-stat-description">
+            Offers received
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     NEEDS ATTENTION
+     ========================================================= -->
+
+{% if attention_count %}
+
+<section class="card dashboard-attention-card">
+
+    <div class="dashboard-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                ACTION REQUIRED
+            </span>
+
+            <h2>
+                Needs Attention
+            </h2>
+
+            <p>
+                A quick view of items that may need your attention.
+            </p>
+
+        </div>
+
+
+        <span class="dashboard-attention-count">
+            {{ attention_count }}
+        </span>
+
+    </div>
+
+
+    <div class="dashboard-attention-list">
+
+
+        <!-- =================================================
+             OVERDUE FOLLOW-UPS
+             ================================================= -->
+
+        {% for follow_up in overdue_follow_ups %}
+
+            <a
+                href="{% url 'applications:detail' follow_up.application.pk %}"
+                class="dashboard-attention-item attention-overdue"
+            >
+
+                <div class="dashboard-attention-icon">
+                    !
+                </div>
+
+
+                <div class="dashboard-attention-content">
+
+                    <strong>
+                        {{ follow_up.title }}
+                    </strong>
+
+                    <span>
+                        {{ follow_up.application.job_title }}
+                        ·
+                        {{ follow_up.application.company.name }}
+                    </span>
+
+                    <small>
+                        Follow-up overdue
+                    </small>
+
+                </div>
+
+
+                <span class="dashboard-attention-arrow">
+                    →
+                </span>
+
+            </a>
+
+        {% endfor %}
+
+
+        <!-- =================================================
+             FOLLOW-UPS TODAY
+             ================================================= -->
+
+        {% for follow_up in todays_follow_ups %}
+
+            <a
+                href="{% url 'applications:detail' follow_up.application.pk %}"
+                class="dashboard-attention-item attention-today"
+            >
+
+                <div class="dashboard-attention-icon">
+                    ✓
+                </div>
+
+
+                <div class="dashboard-attention-content">
+
+                    <strong>
+                        {{ follow_up.title }}
+                    </strong>
+
+                    <span>
+                        {{ follow_up.application.job_title }}
+                        ·
+                        {{ follow_up.application.company.name }}
+                    </span>
+
+                    <small>
+                        Follow-up due today
+                    </small>
+
+                </div>
+
+
+                <span class="dashboard-attention-arrow">
+                    →
+                </span>
+
+            </a>
+
+        {% endfor %}
+
+
+        <!-- =================================================
+             AGING APPLICATIONS
+             ================================================= -->
+
+        {% for application in aging_applications %}
+
+            <a
+                href="{% url 'applications:detail' application.pk %}"
+                class="dashboard-attention-item attention-aging"
+            >
+
+                <div class="dashboard-attention-icon">
+                    ◷
+                </div>
+
+
+                <div class="dashboard-attention-content">
+
+                    <strong>
+                        {{ application.job_title }}
+                    </strong>
+
+                    <span>
+                        {{ application.company.name }}
+                        ·
+                        {{ application.get_status_display }}
+                    </span>
+
+                    <small>
+                        {{ application.application_age_label }}
+                    </small>
+
+                </div>
+
+
+                <span class="dashboard-attention-arrow">
+                    →
+                </span>
+
+            </a>
+
+        {% endfor %}
+
+
+        <!-- =================================================
+             INTERVIEWS TODAY
+             ================================================= -->
+
+        {% for interview in todays_interviews %}
+
+            <a
+                href="{% url 'applications:detail' interview.application.pk %}"
+                class="dashboard-attention-item attention-interview"
+            >
+
+                <div class="dashboard-attention-icon">
+                    ◉
+                </div>
+
+
+                <div class="dashboard-attention-content">
+
+                    <strong>
+                        {{ interview.round_name }}
+                    </strong>
+
+                    <span>
+                        {{ interview.application.job_title }}
+                        ·
+                        {{ interview.application.company.name }}
+                    </span>
+
+                    <small>
+
+                        {% if interview.interview_time %}
+
+                            Today at
+                            {{ interview.interview_time|time:"g:i A" }}
+
+                        {% else %}
+
+                            Interview today
+
+                        {% endif %}
+
+                    </small>
+
+                </div>
+
+
+                <span class="dashboard-attention-arrow">
+                    →
+                </span>
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- =========================================================
+     MAIN DASHBOARD GRID
+     ========================================================= -->
+
+<div class="dashboard-main-grid">
+
+
+    <!-- =====================================================
+         APPLICATION PIPELINE
+         ===================================================== -->
+
+    <section class="card dashboard-workspace-card">
+
+        <div class="dashboard-section-header">
+
+            <div>
+
+                <span class="eyebrow-label">
+                    PROGRESS
+                </span>
+
+                <h2>
+                    Application Pipeline
+                </h2>
+
+                <p>
+                    See where your applications currently stand.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'applications:list' %}"
+                class="dashboard-text-link"
+            >
+                View all →
+            </a>
+
+        </div>
+
+
+        <div class="dashboard-pipeline">
+
+
+            <!-- APPLIED -->
+
+            <div class="dashboard-pipeline-item">
+
+                <span>
+                    Applied
+                </span>
+
+                <strong>
+                    {{ pipeline_counts.applied }}
+                </strong>
+
+            </div>
+
+
+            <div class="dashboard-pipeline-line">
+            </div>
+
+
+            <!-- SHORTLISTED -->
+
+            <div class="dashboard-pipeline-item">
+
+                <span>
+                    Shortlisted
+                </span>
+
+                <strong>
+                    {{ pipeline_counts.shortlisted }}
+                </strong>
+
+            </div>
+
+
+            <div class="dashboard-pipeline-line">
+            </div>
+
+
+            <!-- ASSESSMENT -->
+
+            <div class="dashboard-pipeline-item">
+
+                <span>
+                    Assessment
+                </span>
+
+                <strong>
+                    {{ pipeline_counts.assessment }}
+                </strong>
+
+            </div>
+
+
+            <div class="dashboard-pipeline-line">
+            </div>
+
+
+            <!-- INTERVIEW -->
+
+            <div class="dashboard-pipeline-item">
+
+                <span>
+                    Interview
+                </span>
+
+                <strong>
+                    {{ pipeline_counts.interview }}
+                </strong>
+
+            </div>
+
+
+            <div class="dashboard-pipeline-line">
+            </div>
+
+
+            <!-- OFFER -->
+
+            <div class="dashboard-pipeline-item">
+
+                <span>
+                    Offer
+                </span>
+
+                <strong>
+                    {{ pipeline_counts.offer }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         UPCOMING INTERVIEWS
+         ===================================================== -->
+
+    <section class="card dashboard-workspace-card">
+
+        <div class="dashboard-section-header">
+
+            <div>
+
+                <span class="eyebrow-label">
+                    NEXT UP
+                </span>
+
+                <h2>
+                    Upcoming Interviews
+                </h2>
+
+                <p>
+                    Your next scheduled interviews.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% if upcoming_interviews %}
+
+            <div class="dashboard-upcoming-list">
+
+                {% for interview in upcoming_interviews %}
+
+                    <a
+                        href="{% url 'applications:detail' interview.application.pk %}"
+                        class="dashboard-upcoming-item"
+                    >
+
+                        <div class="dashboard-upcoming-date">
+
+                            <span>
+                                {{ interview.interview_date|date:"M" }}
+                            </span>
+
+                            <strong>
+                                {{ interview.interview_date|date:"d" }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="dashboard-upcoming-content">
+
+                            <strong>
+                                {{ interview.round_name }}
+                            </strong>
+
+                            <span>
+                                {{ interview.application.job_title }}
+                                ·
+                                {{ interview.application.company.name }}
+                            </span>
+
+                            {% if interview.interview_time %}
+
+                                <small>
+                                    {{ interview.interview_time|time:"g:i A" }}
+                                </small>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <span class="dashboard-upcoming-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="dashboard-empty-state">
+
+                <div class="dashboard-empty-icon">
+                    ◷
+                </div>
+
+                <h3>
+                    No upcoming interviews
+                </h3>
+
+                <p>
+                    Scheduled interviews will appear here.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     RECENT APPLICATIONS
+     ========================================================= -->
+
+<section class="card dashboard-workspace-card dashboard-recent-card">
+
+    <div class="dashboard-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                RECENT ACTIVITY
+            </span>
+
+            <h2>
+                Recent Applications
+            </h2>
+
+            <p>
+                Your latest job applications.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'applications:list' %}"
+            class="dashboard-text-link"
+        >
+            View all →
+        </a>
+
+    </div>
+
+
+    {% if recent_applications %}
+
+        <div class="dashboard-recent-list">
+
+            {% for application in recent_applications %}
+
+                <a
+                    href="{% url 'applications:detail' application.pk %}"
+                    class="dashboard-recent-item"
+                >
+
+                    <div class="dashboard-recent-company-avatar">
+                        {{ application.company.name|first|upper }}
+                    </div>
+
+
+                    <div class="dashboard-recent-main">
+
+                        <strong>
+                            {{ application.job_title }}
+                        </strong>
+
+                        <span>
+                            {{ application.company.name }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-recent-date">
+
+                        {{ application.application_date|date:"d M Y" }}
+
+                    </div>
+
+
+                    <span
+                        class="status-badge status-{{ application.status|lower }}"
+                    >
+                        {{ application.get_status_display }}
+                    </span>
+
+
+                    <span class="dashboard-recent-arrow">
+                        →
+                    </span>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+
+        <div class="dashboard-empty-state dashboard-recent-empty">
+
+            <div class="dashboard-empty-icon">
+                ▣
+            </div>
+
+            <h3>
+                No applications yet
+            </h3>
+
+            <p>
+                Start tracking your job applications by
+                adding your first opportunity.
+            </p>
+
+            <a
+                href="{% url 'applications:create' %}"
+                class="btn btn-primary"
+            >
+                + Add Your First Application
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+{% endblock %}

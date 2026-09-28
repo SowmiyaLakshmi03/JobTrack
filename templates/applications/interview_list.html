@@ -1,0 +1,685 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Interviews | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Interviews
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     PAGE HEADER
+     ========================================================= -->
+
+<div class="interviews-page-header">
+
+    <div>
+
+        <span class="eyebrow-label">
+            INTERVIEW WORKSPACE
+        </span>
+
+        <h1>
+            Interviews
+        </h1>
+
+        <p>
+            Keep every interview, meeting and result organized
+            in one place.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'applications:list' %}"
+        class="btn btn-secondary"
+    >
+        ← Applications
+    </a>
+
+</div>
+
+
+<!-- =========================================================
+     OVERVIEW STATS
+     ========================================================= -->
+
+<div class="interviews-overview-grid">
+
+
+    <!-- TOTAL -->
+
+    <div class="card interview-overview-card">
+
+        <div class="interview-overview-top">
+
+            <span>
+                TOTAL
+            </span>
+
+            <div class="interview-overview-icon total">
+                ◷
+            </div>
+
+        </div>
+
+        <strong>
+            {{ total_interviews }}
+        </strong>
+
+        <small>
+            Interviews tracked
+        </small>
+
+    </div>
+
+
+    <!-- TODAY -->
+
+    <div class="card interview-overview-card">
+
+        <div class="interview-overview-top">
+
+            <span>
+                TODAY
+            </span>
+
+            <div class="interview-overview-icon today">
+                !
+            </div>
+
+        </div>
+
+        <strong>
+            {{ today_count }}
+        </strong>
+
+        <small>
+            Interviews today
+        </small>
+
+    </div>
+
+
+    <!-- UPCOMING -->
+
+    <div class="card interview-overview-card">
+
+        <div class="interview-overview-top">
+
+            <span>
+                UPCOMING
+            </span>
+
+            <div class="interview-overview-icon upcoming">
+                →
+            </div>
+
+        </div>
+
+        <strong>
+            {{ upcoming_count }}
+        </strong>
+
+        <small>
+            Future interviews
+        </small>
+
+    </div>
+
+
+    <!-- COMPLETED -->
+
+    <div class="card interview-overview-card">
+
+        <div class="interview-overview-top">
+
+            <span>
+                PAST
+            </span>
+
+            <div class="interview-overview-icon completed">
+                ✓
+            </div>
+
+        </div>
+
+        <strong>
+            {{ completed_count }}
+        </strong>
+
+        <small>
+            Past interviews
+        </small>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TODAY
+     ========================================================= -->
+
+<section class="card interviews-workspace-card">
+
+    <div class="interviews-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                PRIORITY
+            </span>
+
+            <h2>
+                Today's Interviews
+            </h2>
+
+            <p>
+                Interviews scheduled for today.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if todays_interviews %}
+
+        <div class="workspace-interview-list">
+
+            {% for interview in todays_interviews %}
+
+                <div class="workspace-interview-item today-item">
+
+
+                    <!-- DATE -->
+
+                    <div class="workspace-interview-date today-date">
+
+                        <span>
+                            TODAY
+                        </span>
+
+                        <strong>
+                            {{ interview.interview_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MAIN -->
+
+                    <div class="workspace-interview-main">
+
+                        <div class="workspace-interview-title">
+
+                            <h3>
+                                {{ interview.round_name }}
+                            </h3>
+
+                            <span>
+                                {{ interview.get_interview_type_display }}
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            <strong>
+                                {{ interview.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ interview.application.company.name }}
+                        </p>
+
+
+                        <div class="workspace-interview-meta">
+
+                            {% if interview.interview_time %}
+
+                                <span>
+                                    {{ interview.interview_time|time:"g:i A" }}
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    Time not specified
+                                </span>
+
+                            {% endif %}
+
+
+                            {% if interview.interviewer %}
+
+                                <span>
+                                    •
+                                </span>
+
+                                <span>
+                                    {{ interview.interviewer }}
+                                </span>
+
+                            {% endif %}
+
+
+                            <span>
+                                •
+                            </span>
+
+                            <span
+                                class="workspace-result result-{{ interview.result|lower }}"
+                            >
+                                {{ interview.get_result_display }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="workspace-interview-actions">
+
+                        {% if interview.meeting_link %}
+
+                            <a
+                                href="{{ interview.meeting_link }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="workspace-join-button"
+                            >
+                                Join ↗
+                            </a>
+
+                        {% endif %}
+
+
+                        <a
+                            href="{% url 'applications:detail' interview.application.pk %}"
+                            class="workspace-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+
+        <div class="interviews-empty-state">
+
+            <div class="interviews-empty-icon">
+                ◷
+            </div>
+
+            <h3>
+                No interviews today
+            </h3>
+
+            <p>
+                Your interviews scheduled for today will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     UPCOMING INTERVIEWS
+     ========================================================= -->
+
+<section class="card interviews-workspace-card">
+
+    <div class="interviews-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                NEXT UP
+            </span>
+
+            <h2>
+                Upcoming Interviews
+            </h2>
+
+            <p>
+                Your next scheduled interviews.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if upcoming_interviews %}
+
+        <div class="workspace-interview-list">
+
+            {% for interview in upcoming_interviews %}
+
+                <div class="workspace-interview-item">
+
+
+                    <!-- DATE -->
+
+                    <div class="workspace-interview-date">
+
+                        <span>
+                            {{ interview.interview_date|date:"M" }}
+                        </span>
+
+                        <strong>
+                            {{ interview.interview_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MAIN -->
+
+                    <div class="workspace-interview-main">
+
+                        <div class="workspace-interview-title">
+
+                            <h3>
+                                {{ interview.round_name }}
+                            </h3>
+
+                            <span>
+                                {{ interview.get_interview_type_display }}
+                            </span>
+
+                        </div>
+
+
+                        <p>
+
+                            <strong>
+                                {{ interview.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ interview.application.company.name }}
+
+                        </p>
+
+
+                        <div class="workspace-interview-meta">
+
+                            {% if interview.interview_time %}
+
+                                <span>
+                                    {{ interview.interview_time|time:"g:i A" }}
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    Time not specified
+                                </span>
+
+                            {% endif %}
+
+
+                            {% if interview.interviewer %}
+
+                                <span>
+                                    •
+                                </span>
+
+                                <span>
+                                    {{ interview.interviewer }}
+                                </span>
+
+                            {% endif %}
+
+
+                            <span>
+                                •
+                            </span>
+
+                            <span
+                                class="workspace-result result-{{ interview.result|lower }}"
+                            >
+                                {{ interview.get_result_display }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="workspace-interview-actions">
+
+                        {% if interview.meeting_link %}
+
+                            <a
+                                href="{{ interview.meeting_link }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="workspace-join-button"
+                            >
+                                Join ↗
+                            </a>
+
+                        {% endif %}
+
+
+                        <a
+                            href="{% url 'applications:detail' interview.application.pk %}"
+                            class="workspace-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="interviews-empty-state">
+
+            <div class="interviews-empty-icon">
+                →
+            </div>
+
+            <h3>
+                No upcoming interviews
+            </h3>
+
+            <p>
+                Future interviews will appear here automatically.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     PAST INTERVIEWS
+     ========================================================= -->
+
+<section class="card interviews-workspace-card">
+
+    <div class="interviews-section-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                HISTORY
+            </span>
+
+            <h2>
+                Past Interviews
+            </h2>
+
+            <p>
+                Review interviews that have already taken place.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if completed_interviews %}
+
+        <div class="workspace-interview-list">
+
+            {% for interview in completed_interviews %}
+
+                <div class="workspace-interview-item past-item">
+
+
+                    <!-- DATE -->
+
+                    <div class="workspace-interview-date past-date">
+
+                        <span>
+                            {{ interview.interview_date|date:"M" }}
+                        </span>
+
+                        <strong>
+                            {{ interview.interview_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MAIN -->
+
+                    <div class="workspace-interview-main">
+
+                        <div class="workspace-interview-title">
+
+                            <h3>
+                                {{ interview.round_name }}
+                            </h3>
+
+                            <span>
+                                {{ interview.get_interview_type_display }}
+                            </span>
+
+                        </div>
+
+
+                        <p>
+
+                            <strong>
+                                {{ interview.application.job_title }}
+                            </strong>
+
+                            <span>
+                                •
+                            </span>
+
+                            {{ interview.application.company.name }}
+
+                        </p>
+
+
+                        <div class="workspace-interview-meta">
+
+                            {% if interview.interview_time %}
+
+                                <span>
+                                    {{ interview.interview_time|time:"g:i A" }}
+                                </span>
+
+                            {% endif %}
+
+
+                            <span>
+                                •
+                            </span>
+
+                            <span
+                                class="workspace-result result-{{ interview.result|lower }}"
+                            >
+                                {{ interview.get_result_display }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VIEW -->
+
+                    <div class="workspace-interview-actions">
+
+                        <a
+                            href="{% url 'applications:detail' interview.application.pk %}"
+                            class="workspace-view-button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="interviews-empty-state">
+
+            <div class="interviews-empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                No past interviews
+            </h3>
+
+            <p>
+                Completed interview history will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+{% endblock %}

@@ -1,0 +1,914 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ application.job_title }} | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Application Details
+{% endblock %}
+
+{% block content %}
+
+
+<!-- =========================================================
+     APPLICATION HEADER
+     ========================================================= -->
+
+<div class="detail-page-header">
+
+    <div class="detail-header-content">
+
+        <div class="detail-company-avatar">
+            {{ application.company.name|first|upper }}
+        </div>
+
+        <div>
+
+            <h1>
+                {{ application.job_title }}
+            </h1>
+
+            <div class="detail-meta">
+
+                <span>
+                    {{ application.company.name }}
+                </span>
+
+                {% if application.location %}
+
+                    <span class="detail-meta-separator">
+                        •
+                    </span>
+
+                    <span>
+                        {{ application.location }}
+                    </span>
+
+                {% endif %}
+
+                <span class="detail-meta-separator">
+                    •
+                </span>
+
+                <span>
+                    {{ application.get_work_mode_display }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER ACTIONS
+         ===================================================== -->
+
+    <div class="detail-header-actions">
+
+        <a
+            href="{% url 'applications:interview_create' application.pk %}"
+            class="btn btn-primary"
+        >
+            + Add Interview
+        </a>
+
+        <a
+            href="{% url 'applications:follow_up_create' application.pk %}"
+            class="btn btn-secondary"
+        >
+            + Add Follow-up
+        </a>
+
+        <a
+            href="{% url 'applications:update' application.pk %}"
+            class="btn btn-secondary"
+        >
+            Edit Application
+        </a>
+
+        <a
+            href="{% url 'applications:list' %}"
+            class="btn btn-secondary"
+        >
+            ← Back
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     APPLICATION STATUS
+     ========================================================= -->
+
+<section class="card application-status-card">
+
+    <div class="status-main">
+
+        <div>
+
+            <span class="detail-section-label">
+                APPLICATION STATUS
+            </span>
+
+            <div class="status-display">
+
+                <span
+                    class="status-badge status-{{ application.status|lower }}"
+                >
+                    {{ application.get_status_display }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="status-date">
+
+            <span class="detail-section-label">
+                APPLIED ON
+            </span>
+
+            <strong>
+                {{ application.application_date|date:"d M Y" }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    {% if application.job_url %}
+
+        <div class="status-job-link">
+
+            <a
+                href="{{ application.job_url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="external-link"
+            >
+                View Original Job Posting ↗
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     ACTIVITY TIMELINE
+     ========================================================= -->
+
+<section class="card application-timeline-card">
+
+    <div class="timeline-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                ACTIVITY
+            </span>
+
+            <h2>
+                Application Timeline
+            </h2>
+
+            <p>
+                Follow the important events connected to this application.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="application-timeline">
+
+
+        <!-- =================================================
+             APPLICATION CREATED
+             ================================================= -->
+
+        <div class="timeline-item">
+
+            <div class="timeline-marker timeline-marker-application">
+                ✓
+            </div>
+
+            <div class="timeline-line">
+            </div>
+
+            <div class="timeline-content">
+
+                <div class="timeline-content-top">
+
+                    <div>
+
+                        <span class="timeline-event-label">
+                            APPLICATION
+                        </span>
+
+                        <h3>
+                            Application submitted
+                        </h3>
+
+                    </div>
+
+                    <span class="timeline-date">
+                        {{ application.application_date|date:"d M Y" }}
+                    </span>
+
+                </div>
+
+                <p>
+                    Application submitted for
+                    <strong>{{ application.job_title }}</strong>
+                    at
+                    <strong>{{ application.company.name }}</strong>.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INTERVIEWS
+             ================================================= -->
+
+        {% for interview in application.interviews.all %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-marker timeline-marker-interview">
+                    ◉
+                </div>
+
+                <div class="timeline-line">
+                </div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-content-top">
+
+                        <div>
+
+                            <span class="timeline-event-label">
+                                INTERVIEW
+                            </span>
+
+                            <h3>
+                                {{ interview.round_name }}
+                            </h3>
+
+                        </div>
+
+                        <span class="timeline-date">
+
+                            {{ interview.interview_date|date:"d M Y" }}
+
+                            {% if interview.interview_time %}
+
+                                ·
+                                {{ interview.interview_time|time:"g:i A" }}
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                    <p>
+
+                        {{ interview.get_interview_type_display }}
+
+                        {% if interview.interviewer %}
+
+                            · {{ interview.interviewer }}
+
+                        {% endif %}
+
+                        ·
+                        {{ interview.get_result_display }}
+
+                    </p>
+
+
+                    {% if interview.meeting_link %}
+
+                        <a
+                            href="{{ interview.meeting_link }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="timeline-link"
+                        >
+                            Join Interview ↗
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+        <!-- =================================================
+             FOLLOW-UPS
+             ================================================= -->
+
+        {% for follow_up in application.follow_ups.all %}
+
+            <div class="timeline-item">
+
+                <div class="timeline-marker timeline-marker-followup">
+
+                    {% if follow_up.completed %}
+                        ✓
+                    {% else %}
+                        →
+                    {% endif %}
+
+                </div>
+
+                <div class="timeline-line">
+                </div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-content-top">
+
+                        <div>
+
+                            <span class="timeline-event-label">
+                                FOLLOW-UP
+                            </span>
+
+                            <h3>
+                                {{ follow_up.title }}
+                            </h3>
+
+                        </div>
+
+                        <span class="timeline-date">
+
+                            {{ follow_up.follow_up_date|date:"d M Y" }}
+
+                        </span>
+
+                    </div>
+
+
+                    <p>
+
+                        {% if follow_up.completed %}
+
+                            Follow-up completed.
+
+                        {% else %}
+
+                            Follow-up pending.
+
+                        {% endif %}
+
+                    </p>
+
+
+                    {% if follow_up.notes %}
+
+                        <div class="timeline-note">
+                            {{ follow_up.notes|linebreaks }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+        <!-- =================================================
+             EMPTY ACTIVITY STATE
+             ================================================= -->
+
+        {% if not application.interviews.exists and not application.follow_ups.exists %}
+
+            <div class="timeline-empty">
+
+                <div class="timeline-empty-icon">
+                    ◷
+                </div>
+
+                <div>
+
+                    <h3>
+                        No additional activity yet
+                    </h3>
+
+                    <p>
+                        Interviews and follow-ups will appear here
+                        as you continue managing this application.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     INTERVIEW TRACKING
+     ========================================================= -->
+
+<section class="card interview-summary-card">
+
+    <div class="interview-summary-header">
+
+        <div>
+
+            <span class="eyebrow-label">
+                INTERVIEW TRACKING
+            </span>
+
+            <h2>
+                Interviews
+            </h2>
+
+            <p>
+                Keep track of scheduled interviews for this application.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if application.interviews.exists %}
+
+        <div class="interview-list">
+
+            {% for interview in application.interviews.all %}
+
+                <div class="interview-item">
+
+                    <div class="interview-date-box">
+
+                        <span>
+                            {{ interview.interview_date|date:"M" }}
+                        </span>
+
+                        <strong>
+                            {{ interview.interview_date|date:"d" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="interview-main">
+
+                        <div class="interview-title-row">
+
+                            <h3>
+                                {{ interview.round_name }}
+                            </h3>
+
+                            <span class="interview-type-badge">
+                                {{ interview.get_interview_type_display }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="interview-meta">
+
+                            <span>
+
+                                {% if interview.interview_time %}
+
+                                    {{ interview.interview_time|time:"g:i A" }}
+
+                                {% else %}
+
+                                    Time not specified
+
+                                {% endif %}
+
+                            </span>
+
+
+                            {% if interview.interviewer %}
+
+                                <span>
+                                    •
+                                </span>
+
+                                <span>
+                                    {{ interview.interviewer }}
+                                </span>
+
+                            {% endif %}
+
+
+                            <span>
+                                •
+                            </span>
+
+
+                            <span
+                                class="interview-result interview-result-{{ interview.result|lower }}"
+                            >
+                                {{ interview.get_result_display }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if interview.meeting_link %}
+
+                        <a
+                            href="{{ interview.meeting_link }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="interview-join-button"
+                        >
+                            Join ↗
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="interview-empty-state">
+
+            <div class="interview-empty-icon">
+                ◷
+            </div>
+
+            <div>
+
+                <h3>
+                    No interviews scheduled
+                </h3>
+
+                <p>
+                    Add an interview when this company schedules
+                    the next stage of your application.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'applications:interview_create' application.pk %}"
+                class="btn btn-primary"
+            >
+                + Add Interview
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     JOB DETAILS + COMPANY
+     ========================================================= -->
+
+<div class="detail-content-grid">
+
+
+    <!-- JOB DETAILS -->
+
+    <section class="card detail-section-card">
+
+        <div class="detail-card-heading">
+
+            <div>
+
+                <h2>
+                    Job Details
+                </h2>
+
+                <p>
+                    Information about this position.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-info-grid">
+
+
+            <div class="detail-info-item">
+
+                <span>
+                    Job Title
+                </span>
+
+                <strong>
+                    {{ application.job_title }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-info-item">
+
+                <span>
+                    Job Type
+                </span>
+
+                <strong>
+                    {{ application.get_job_type_display }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-info-item">
+
+                <span>
+                    Work Mode
+                </span>
+
+                <strong>
+                    {{ application.get_work_mode_display }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-info-item">
+
+                <span>
+                    Location
+                </span>
+
+                <strong>
+
+                    {% if application.location %}
+
+                        {{ application.location }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="detail-info-item">
+
+                <span>
+                    Salary
+                </span>
+
+                <strong>
+
+                    {% if application.salary %}
+
+                        ₹{{ application.salary|floatformat:0 }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="detail-info-item">
+
+                <span>
+                    Application Date
+                </span>
+
+                <strong>
+                    {{ application.application_date|date:"d M Y" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- COMPANY -->
+
+    <section class="card detail-section-card">
+
+        <div class="detail-card-heading">
+
+            <div>
+
+                <h2>
+                    Company
+                </h2>
+
+                <p>
+                    Information about the employer.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="company-detail-header">
+
+            <div class="company-detail-avatar">
+                {{ application.company.name|first|upper }}
+            </div>
+
+            <div>
+
+                <h3>
+                    {{ application.company.name }}
+                </h3>
+
+                {% if application.company.industry %}
+
+                    <span>
+                        {{ application.company.industry }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="company-detail-list">
+
+            {% if application.company.location %}
+
+                <div class="company-detail-row">
+
+                    <span>
+                        Location
+                    </span>
+
+                    <strong>
+                        {{ application.company.location }}
+                    </strong>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if application.company.website %}
+
+                <div class="company-detail-row">
+
+                    <span>
+                        Website
+                    </span>
+
+                    <a
+                        href="{{ application.company.website }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="external-link"
+                    >
+                        Visit Website ↗
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     NOTES
+     ========================================================= -->
+
+<section class="card detail-section-card notes-card">
+
+    <div class="detail-card-heading">
+
+        <div>
+
+            <h2>
+                Notes
+            </h2>
+
+            <p>
+                Your notes about this application.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if application.notes %}
+
+        <div class="application-notes">
+
+            {{ application.notes|linebreaks }}
+
+        </div>
+
+    {% else %}
+
+        <div class="notes-empty">
+
+            <span class="notes-empty-icon">
+                ✎
+            </span>
+
+            <div>
+
+                <strong>
+                    No notes added
+                </strong>
+
+                <p>
+                    Add notes when you edit this application.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     APPLICATION MANAGEMENT
+     ========================================================= -->
+
+<section class="card management-card">
+
+    <div>
+
+        <h2>
+            Application Management
+        </h2>
+
+        <p>
+            Delete this application if you no longer want
+            to track it in JobTrack.
+        </p>
+
+    </div>
+
+    <a
+        href="{% url 'applications:delete' application.pk %}"
+        class="btn btn-danger"
+    >
+        Delete Application
+    </a>
+
+</section>
+
+
+{% endblock %}

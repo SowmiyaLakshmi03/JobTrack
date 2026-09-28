@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Add Company | JobTrack
+{% endblock %}
+
+{% block page_heading %}
+    Add Company
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Add Company</h1>
+
+        <p class="page-subtitle">
+            Add a company so you can connect it to your job applications.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'applications:create' %}"
+        class="btn btn-secondary"
+    >
+        ← Back to Application
+    </a>
+
+</div>
+
+
+<div class="form-card card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Company Details</h2>
+
+            <p>
+                Enter the basic information about the company.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <form method="post" class="application-form">
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="form-errors">
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="form-section">
+
+            <div class="form-grid">
+
+
+                <!-- Company Name -->
+
+                <div class="form-group form-group-full">
+
+                    <label for="{{ form.name.id_for_label }}">
+                        Company Name
+                    </label>
+
+                    {{ form.name }}
+
+                    {% if form.name.errors %}
+
+                        <div class="field-error">
+                            {{ form.name.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Website -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.website.id_for_label }}">
+                        Website
+                    </label>
+
+                    {{ form.website }}
+
+                    {% if form.website.errors %}
+
+                        <div class="field-error">
+                            {{ form.website.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Location -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.location.id_for_label }}">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                    {% if form.location.errors %}
+
+                        <div class="field-error">
+                            {{ form.location.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Industry -->
+
+                <div class="form-group form-group-full">
+
+                    <label for="{{ form.industry.id_for_label }}">
+                        Industry
+                    </label>
+
+                    {{ form.industry }}
+
+                    {% if form.industry.errors %}
+
+                        <div class="field-error">
+                            {{ form.industry.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- Actions -->
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'applications:create' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Company
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

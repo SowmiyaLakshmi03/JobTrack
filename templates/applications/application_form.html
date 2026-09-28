@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if application %}
+        Edit Application | JobTrack
+    {% else %}
+        Add Application | JobTrack
+    {% endif %}
+{% endblock %}
+
+{% block page_heading %}
+    {% if application %}
+        Edit Application
+    {% else %}
+        Add Application
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            {% if application %}
+                Edit Job Application
+            {% else %}
+                Add Job Application
+            {% endif %}
+        </h1>
+
+        <p class="page-subtitle">
+
+            {% if application %}
+                Update the details of this opportunity.
+            {% else %}
+                Save a new opportunity to your job search workspace.
+            {% endif %}
+
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'applications:list' %}"
+        class="btn btn-secondary"
+    >
+        ← Back to Applications
+    </a>
+
+</div>
+
+
+<div class="form-card card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+                Application Details
+            </h2>
+
+            <p>
+                Keep the information accurate so your dashboard
+                can provide useful insights later.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <form
+        method="post"
+        class="application-form"
+    >
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="form-errors">
+
+                {% for error in form.non_field_errors %}
+
+                    <p>
+                        {{ error }}
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- ========================================= -->
+        <!-- JOB INFORMATION -->
+        <!-- ========================================= -->
+
+        <div class="form-section">
+
+            <div class="form-section-heading">
+
+                <h3>
+                    Job Information
+                </h3>
+
+                <p>
+                    Basic information about the position.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <!-- JOB TITLE -->
+
+                <div class="form-group form-group-full">
+
+                    <label for="{{ form.job_title.id_for_label }}">
+                        Job Title
+                    </label>
+
+                    {{ form.job_title }}
+
+                    {% if form.job_title.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.job_title.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- COMPANY -->
+
+                <div class="form-group">
+
+                    <div class="form-label-row">
+
+                        <label for="{{ form.company.id_for_label }}">
+                            Company
+                        </label>
+
+                        <a
+                            href="{% url 'applications:company_create' %}"
+                            class="form-add-link"
+                        >
+                            + Add Company
+                        </a>
+
+                    </div>
+
+
+                    {{ form.company }}
+
+
+                    {% if form.company.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.company.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- JOB TYPE -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.job_type.id_for_label }}">
+                        Job Type
+                    </label>
+
+                    {{ form.job_type }}
+
+                    {% if form.job_type.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.job_type.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- WORK MODE -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.work_mode.id_for_label }}">
+                        Work Mode
+                    </label>
+
+                    {{ form.work_mode }}
+
+                    {% if form.work_mode.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.work_mode.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.location.id_for_label }}">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                    {% if form.location.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.location.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- APPLICATION INFORMATION -->
+        <!-- ========================================= -->
+
+        <div class="form-section">
+
+            <div class="form-section-heading">
+
+                <h3>
+                    Application Information
+                </h3>
+
+                <p>
+                    Track when and how you applied.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <!-- APPLICATION DATE -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.application_date.id_for_label }}">
+                        Application Date
+                    </label>
+
+                    {{ form.application_date }}
+
+                    {% if form.application_date.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.application_date.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.status.id_for_label }}">
+                        Status
+                    </label>
+
+                    {{ form.status }}
+
+                    {% if form.status.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.status.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- SALARY -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.salary.id_for_label }}">
+                        Salary
+                    </label>
+
+                    {{ form.salary }}
+
+                    {% if form.salary.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.salary.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- JOB URL -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.job_url.id_for_label }}">
+                        Job Posting URL
+                    </label>
+
+                    {{ form.job_url }}
+
+                    {% if form.job_url.errors %}
+
+                        <div class="field-error">
+
+                            {{ form.job_url.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- NOTES -->
+        <!-- ========================================= -->
+
+        <div class="form-section">
+
+            <div class="form-section-heading">
+
+                <h3>
+                    Notes
+                </h3>
+
+                <p>
+                    Add useful details you want to remember.
+                </p>
+
+            </div>
+
+
+            <div class="form-group form-group-full">
+
+                <label for="{{ form.notes.id_for_label }}">
+                    Application Notes
+                </label>
+
+                {{ form.notes }}
+
+                {% if form.notes.errors %}
+
+                    <div class="field-error">
+
+                        {{ form.notes.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- FORM ACTIONS -->
+        <!-- ========================================= -->
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'applications:list' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                {% if application %}
+                    Save Changes
+                {% else %}
+                    Save Application
+                {% endif %}
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}
