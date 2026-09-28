@@ -3,7 +3,6 @@ from django.urls import include, path
 
 from applications import views
 
-
 urlpatterns = [
 
     # =====================================================

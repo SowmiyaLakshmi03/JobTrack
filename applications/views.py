@@ -17,14 +17,11 @@ from .forms import (
     InterviewForm,
     JobApplicationForm,
 )
-
 from .models import (
-    Company,
     FollowUp,
     Interview,
     JobApplication,
 )
-
 
 # =========================================================
 # REGISTRATION

@@ -4,11 +4,10 @@ from django.utils import timezone
 
 from .models import (
     Company,
-    JobApplication,
-    Interview,
     FollowUp,
+    Interview,
+    JobApplication,
 )
-
 
 # =========================================================
 # COMPANY FORM
