@@ -1,103 +1,74 @@
 # JobTrack — Job Application Tracker
 
-A professional Django-based job application tracking platform designed to help job seekers organize applications, interviews, follow-ups, and their overall job-search workflow in one place.
+A professional Django-based job application tracking platform designed to help job seekers organize applications, interviews, follow-ups, and their complete job-search workflow in one place.
 
-## Overview
-
-JobTrack is a full-stack web application built with Django and PostgreSQL.
-
-It provides a centralized workspace where users can:
-
-- Track job applications
-- Monitor application status
-- Search and filter applications
-- Manage interviews
-- Schedule follow-ups
-- Track completed follow-ups
-- View application activity timelines
-- Monitor their job-search progress through a dashboard
-
-The project focuses on a clean, responsive, and practical user experience rather than a basic CRUD interface.
+🔗 **Live Demo:** https://jobtrack-9v91.onrender.com
 
 ---
 
-## Features
+## 📌 About the Project
 
-### 📊 Smart Dashboard
+JobTrack is a full-stack web application built with Django and PostgreSQL.
 
-The dashboard provides a quick overview of the current job search.
+Instead of managing job applications through spreadsheets or scattered notes, JobTrack provides a centralized workspace where users can:
+
+- Track job applications
+- Monitor application status
+- Organize companies and job details
+- Schedule and manage interviews
+- Track recruiter follow-ups
+- Search and filter applications
+- View the overall application pipeline
+- Identify applications and tasks that need attention
+
+The project was built with a focus on clean UI, practical workflow design, secure data handling, and real-world deployment.
+
+---
+
+## ✨ Key Features
+
+### 📊 Job Hunt Dashboard
+
+A centralized dashboard provides an overview of the current job search.
 
 It includes:
 
 - Total applications
-- Application status overview
+- Interview statistics
+- Offer statistics
+- Applications needing attention
 - Application pipeline
 - Upcoming interviews
-- Today's interview alerts
 - Recent applications
-- Applications requiring attention
+- Today's interview alerts
 
 ---
 
 ### 📋 Application Management
 
-Users can create and manage job applications with details such as:
+Users can create and manage complete job application records.
 
-- Company
+Each application can contain:
+
 - Job title
+- Company
 - Job type
 - Work mode
 - Location
 - Salary
 - Application date
 - Application status
-- Job posting URL
+- Original job posting URL
 - Notes
 
 Supported application statuses include:
 
-- Applied
-- Shortlisted
-- Assessment
-- Interview
-- Offer
-- Rejected
-- Withdrawn
-- Accepted
-
----
-
-### 🔎 Search, Filtering & Sorting
-
-Applications can be organized using:
-
-- Keyword search
-- Company search
-- Job title search
-- Location search
-- Status filtering
-- Job type filtering
-- Work mode filtering
-- Sorting by date
-- Sorting by job title
-- Sorting by company
-- Sorting by status
-
----
-
-### 🎯 Application Pipeline
-
-JobTrack provides a visual application pipeline to understand where applications currently stand.
-
 ```text
 Applied
-   ↓
 Shortlisted
-   ↓
 Assessment
-   ↓
 Interview
-   ↓
 Offer
-   ↓
-Accepted
+Rejected
+Withdrawn
+Accepted 
