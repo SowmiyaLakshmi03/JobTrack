@@ -27,9 +27,58 @@ SECRET_KEY = os.getenv(
     "django-insecure-development-key-change-this-later"
 )
 
-DEBUG = True
+# Local development:
+#   DEBUG=True
+#
+# Render:
+#   DEBUG=False
+#
+# Render also provides the RENDER environment variable.
+DEBUG = "RENDER" not in os.environ
 
-ALLOWED_HOSTS = []
+# =========================================================
+# ALLOWED HOSTS
+# =========================================================
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
+
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+
+# =========================================================
+# CSRF TRUSTED ORIGINS
+# =========================================================
+
+CSRF_TRUSTED_ORIGINS = []
+
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(
+        f"https://{RENDER_EXTERNAL_HOSTNAME}"
+    )
+
+    # =========================================================
+# PRODUCTION SECURITY
+# =========================================================
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+
+    SECURE_PROXY_SSL_HEADER = (
+        "HTTP_X_FORWARDED_PROTO",
+        "https",
+    )
+
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = 31536000
 
 
 # =========================================================
@@ -55,6 +104,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # WhiteNoise serves static files in production
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -125,16 +178,24 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
     },
 ]
 
@@ -156,13 +217,25 @@ USE_TZ = True
 # STATIC FILES
 # =========================================================
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+# WhiteNoise static-file storage
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND":
+            "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # =========================================================
